@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "node-prom-app.fullname" . }}
+  labels:
+    {{- include "node-prom-app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "node-prom-app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "node-prom-app.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: default   # ✅ Use default ServiceAccount
+
+      containers:
+        - name: node-prom-app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
