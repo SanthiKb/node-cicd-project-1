@@ -1,12 +1,14 @@
-# app/Dockerfile
-
 FROM node:18-alpine
+
 WORKDIR /app
 
-COPY package*.json ./
+# Copy only package files first (for better caching)
+COPY app/package*.json ./  
+
 RUN npm install
 
-COPY . .
+# Copy rest of the app source
+COPY app/. .
 
 EXPOSE 3000
 CMD ["node", "index.js"]
