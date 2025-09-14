@@ -21,8 +21,10 @@ jobs:
            run: npm install
            working-directory: ./app/
 
-         - name: Run Test/kubernetes
-           run: npm install
+         - name: Run Tests
+           run: npm test
+           working-directory: ./app/
+
 
          - name: SonarQube Token
            uses: sonarsource/sonarqube-scan-action@v3
